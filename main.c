@@ -3,7 +3,7 @@
 #include "portaudio.h"
 
 #define SAMPLE_RATE 44100
-#define FRAMES_PER_BUFFER 64
+#define FRAMES_PER_BUFFER 32
 
 static int audioCallback(const void *inputBuffer, void *outputBuffer,
                          unsigned long framesPerBuffer,
@@ -29,9 +29,9 @@ int main(void) {
 
     // добавить поддержку ASIO
     err = Pa_OpenDefaultStream(&stream,
-                               1, // входной канал
-                               1, // выходной канал
-                               paFloat32, // формат
+                               1, // входной канал mono
+                               1, // выходной канал mono
+                               paFloat32, // формат библиотеки
                                SAMPLE_RATE,
                                FRAMES_PER_BUFFER,
                                audioCallback,
@@ -41,7 +41,9 @@ int main(void) {
     err = Pa_StartStream(stream);
     if (err != paNoError) goto error;
 
-    printf("Сквозной звук запущен. Нажмите Enter для выхода...\n");
+
+    printf("Latency should be: %.2f ms\n", (1000.0 * FRAMES_PER_BUFFER) / SAMPLE_RATE);
+    printf("Sound is passing. Press Enter to exit...\n");
     getchar(); // ждём ввода Enter
 
     // Остановка и очистка

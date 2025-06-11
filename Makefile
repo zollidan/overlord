@@ -1,24 +1,22 @@
-# Имя исполняемого файла
+# Переменные
 TARGET = main
-
-# Файлы исходников
-SRC = main.c
-
-# Компилятор
-CC = gcc
-
-# Флаги компилятора
+SOURCES = main.c
 CFLAGS = -Wall -O2
+LIBS = -lportaudio -lm
 
-# Линковка с PortAudio и math (для tanh, если нужно позже)
-LDFLAGS = -lportaudio -lm
+# Объявляем цели как фиктивные (не файлы)
+.PHONY: all clean rebuild
 
-# Основная цель
-all: $(TARGET)
+# Основная цель - всегда пересобирать
+all: rebuild
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $^ #$(LDFLAGS)
+# Обычная сборка (с проверкой зависимостей)
+$(TARGET): $(SOURCES)
+	gcc $(CFLAGS) $(SOURCES) -o $(TARGET) $(LIBS)
 
-# Удалить бинарник
+# Принудительная пересборка
+rebuild: clean $(TARGET)
+
+# Удаление бинарника
 clean:
 	rm -f $(TARGET)
